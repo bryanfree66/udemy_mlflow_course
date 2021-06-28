@@ -1,0 +1,11 @@
+data
+notebooks
+
+.cache
+.ipython
+.local
+.vscode
+.env
+.jupyter
+.config
+.DS_Store

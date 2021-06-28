@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  jupyter:
+    image: jupyter/all-spark-notebook:lab-3.0.16
+    container_name: service_jupyter
+    volumes:
+      - "./.env:/home/jovyan/.env"
+      - ".jupyter:/home/jovyan/.jupyter"  
+      - "./data:/home/jovyan/work/data"
+      - "./notebooks:/home/jovyan/work/notebooks"
+      - "./project:/home/jovyan/work/project"
+      - "./tests:/home/jovyan/work/tests"
+    ports:
+      - "8888:8888"
+      - "4040-4050:4040-4050"
+    command: "start-notebook.sh \
+      --NotebookApp.password=${ACCESS_TOKEN}"
+networks:
+    default:
+        name: dev_env_default
+      
