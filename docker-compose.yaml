@@ -1,5 +1,6 @@
 version: '3.7'
 services:
+  # Jupyter Notebook Server  
   jupyter:
     image: jupyter/all-spark-notebook:lab-3.0.16
     container_name: service_jupyter
@@ -13,8 +14,81 @@ services:
     ports:
       - "8888:8888"
       - "4040-4050:4040-4050"
+    environment:
+    - AWS_ACCESS_KEY_ID=${MINIO_ACCESS_KEY}
+    - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_KEY}
+    - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+    - MLFLOW_TRACKING_URI=http://mlflow:5000
+  
     command: "start-notebook.sh \
       --NotebookApp.password=${ACCESS_TOKEN}"
+    depends_on:
+      - mlflow
+
+  # MLFlow Server
+  mlflow:
+    build:
+        context: ./mlflow
+    container_name: service_mlflow
+    volumes:
+        - "./models/mlruns:/opt/mlruns"
+    ports:
+        - "5000:5000"
+    environment:
+        - AWS_ACCESS_KEY_ID=${MINIO_ACCESS_KEY}
+        - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_KEY}
+        - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+        - S3_USE_SIGV4=True
+        - AWS_DEFAULT_REGION=us-east-1
+      
+    entrypoint:
+        - /opt/conda/bin/mlflow 
+        - server 
+        - --host
+        - "0.0.0.0"
+        - --workers
+        - "1"
+        - --port
+        - "5000"
+        - --backend-store-uri 
+        - mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/mlflow
+        - --default-artifact-root
+        - s3://artifacts
+    depends_on: 
+      - mysql
+      - minio
+
+  # MySQL Server Service
+  mysql:
+    image: mysql:8.0.25
+    container_name: service_mysql
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+        - ./mysql-data:/var/lib/mysql
+    ports:
+        - "3306:3306"
+    environment:
+        - MYSQL_DATABASE=mlflow
+        - MYSQL_RANDOM_ROOT_PASSWORD=yes
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_USER=${MYSQL_USER}
+
+  # MINIO Service
+  minio:
+    image: store/minio/minio:RELEASE.2020-12-29T23-29-29Z
+    container_name: service_minio
+    volumes:
+      - "./models/s3:/data"
+    ports:
+      - "9000:9000"
+    environment:
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+    entrypoint:
+      - minio 
+      - server 
+      - /data
+
 networks:
     default:
         name: dev_env_default

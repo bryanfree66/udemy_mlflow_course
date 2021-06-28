@@ -1,4 +1,6 @@
 # Byte-compiled / optimized / DLL files
+models/
+mysql-data/
 
 # VS Code
 .DS_Store
