@@ -1,6 +1,8 @@
 # Byte-compiled / optimized / DLL files
 models/
 mysql-data/
+data/chronic_kidney_disease_train/
+data/chronic_kidney_disease_test/
 
 # VS Code
 .DS_Store
