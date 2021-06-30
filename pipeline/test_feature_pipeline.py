@@ -1,5 +1,4 @@
 import unittest
-import project
 
 class TestingClass(unittest.TestCase):
     def test_first(self):    
