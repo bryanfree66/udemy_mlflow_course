@@ -6,4 +6,5 @@ services:
     image: "spark-test"
     volumes:
       - .:/app
-    command: python3 -m pytest
+      - ../data:/data
+    command: py.test -h
