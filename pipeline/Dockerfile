@@ -14,6 +14,6 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip3 install pytest pyspark
+RUN pip3 install cython==0.29.21 numpy==1.18.5 pytest pyspark
 
 ENV PYSPARK_PYTHON=python3
