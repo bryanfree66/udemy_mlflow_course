@@ -53,6 +53,12 @@ def test_create_feature_vector(spark_session):
 
     # Call method under test
     result_df = create_feature_vector(df, input_cols, output_col)
-
+    row = result_df.select('Features').take(2)
+    row_dict_0 = row[0].asDict()
+    vector_0 = row_dict_0['Features']
+    row_dict_1 = row[1].asDict()
+    vector_1 = row_dict_1['Features']
     # Make Assertions
     assert isinstance(result_df, DataFrame)
+    assert 98.3679148956603 == vector_0[0]
+    assert 103.46475866009455 == vector_1[0]
