@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   test:
-    image: bryanallenfreeman/spark-test
+    image: bryanallenfreeman/spark-test:0.1.0-80d4a7c 
     container_name: spark-test
     environment:
       - PYTHONPATH=./src
