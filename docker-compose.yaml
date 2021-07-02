@@ -9,8 +9,7 @@ services:
       - ".jupyter:/home/jovyan/.jupyter"  
       - "./data:/home/jovyan/work/data"
       - "./notebooks:/home/jovyan/work/notebooks"
-      - "./project:/home/jovyan/work/pipeline"
-      - "./pipeline-tests:/home/jovyan/work/pipeline-tests"
+      - "./pipeline:/home/jovyan/work/pipeline"
     ports:
       - "8888:8888"
       - "4040-4050:4040-4050"
