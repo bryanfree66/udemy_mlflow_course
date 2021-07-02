@@ -1,9 +1,11 @@
 version: "3.9"
 services:
   test:
+    build:
+      context: .
+    container_name: "spark_test"
     environment:
       - PYTHONPATH=./src
-    image: "spark-test"
     volumes:
       - .:/app
       - ../data:/data
