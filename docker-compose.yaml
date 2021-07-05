@@ -26,8 +26,7 @@ services:
 
   # MLFlow Server
   mlflow:
-    build:
-        context: ./mlflow
+    image: bryanallenfreeman/mlflow:v1.18.0
     container_name: service_mlflow
     volumes:
         - "./models/mlruns:/opt/mlruns"
