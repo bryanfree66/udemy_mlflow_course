@@ -7,10 +7,10 @@ services:
     volumes:
       - "./.env:/home/jovyan/.env"
       - ".jupyter:/home/jovyan/.jupyter"  
-      - "./data:/home/jovyan/data"
-      - "./notebooks:/home/jovyan/notebooks"
-      - "./pipeline:/home/jovyan/pipeline"
-      - "./utilities:/home/jovyan/utilities"
+      - "./data:/home/jovyan/work/data"
+      - "./notebooks:/home/jovyan/work/notebooks"
+      - "./pipeline:/home/jovyan/work/pipeline"
+      - "./utilities:/home/jovyan/work/utilities"
     ports:
       - "8888:8888"
       - "4040-4050:4040-4050"
