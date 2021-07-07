@@ -35,3 +35,11 @@ def scale_features(df, input_col, output_col) -> DataFrame:
     )
     scaler_fit = scaler.fit(df)
     return scaler_fit.transform(df)
+
+"""Performs polynomial expansion on vector of scaled features
+Creates a PolynomialFeatures column in a Dataframe from a vector of scaled features
+Outputs a Spark DataFrame with the output column appended
+"""
+def expand_features(df, input_col, output_col) -> DataFrame:
+    poly_feature_exp = PolynomialExpansion(degree=3, inputCol=input_col, outputCol=output_col)
+    return poly_feature_exp.transform(df)
