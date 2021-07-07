@@ -3,7 +3,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
 from pyspark.ml.linalg import Vectors
-from .feature_pipeline import impute_missing, create_feature_vector, scale_features
+from .feature_pipeline import expand_features, impute_missing, create_feature_vector, scale_features
 
 @pytest.fixture(scope="session")
 def spark_session():
@@ -58,9 +58,10 @@ def test_create_feature_vector(spark_session):
     # Make Assertions
     assert isinstance(result_df, DataFrame)
     assert ['Column1','Column2','Column3', 'Label', 'Features'] == result_df.columns
+    assert "<class 'pyspark.sql.types.StructField'>" == str(type(result_df.schema["Features"]))
     assert 3 == result_df.schema["Features"].metadata["ml_attr"]["num_attrs"]
 
-    #@pytest.mark.usefixtures("spark_session")
+#@pytest.mark.usefixtures("spark_session")
 def test_scale_features(spark_session):
     df = spark_session.createDataFrame(
         [
@@ -79,4 +80,26 @@ def test_scale_features(spark_session):
     # Make Assertions
     assert isinstance(result_df, DataFrame)
     assert ['Features', 'Label', 'ScaledFeatures'] == result_df.columns
+    assert "<class 'pyspark.sql.types.StructField'>" == str(type(result_df.schema["ScaledFeatures"]))
     assert 3 == result_df.schema["ScaledFeatures"].metadata["ml_attr"]["num_attrs"]
+
+#@pytest.mark.usefixtures("spark_session")
+def test_expand_features(spark_session):
+    df = spark_session.createDataFrame(
+        [
+            ((Vectors.dense([-2.9992, 0.7207, 2.1483])),1),
+            ((Vectors.dense([-2.844, 0.6065, 0.8047])),0),
+            ((Vectors.dense([-2.678, -0.8779, -1.0894])),1)
+        ],
+        ['ScaledFeatures', 'Label']
+    )
+    input_col = 'ScaledFeatures'
+    output_col='PolynomialFeatures'
+
+    # Call method under test
+    result_df = expand_features(df, input_col, output_col)
+    
+    # Make Assertions
+    assert isinstance(result_df, DataFrame)
+    assert ['ScaledFeatures', 'Label', 'PolynomialFeatures'] == result_df.columns
+    assert "<class 'pyspark.sql.types.StructField'>" == str(type(result_df.schema["PolynomialFeatures"]))
