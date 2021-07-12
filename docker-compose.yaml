@@ -9,6 +9,7 @@ services:
       - ".jupyter:/home/jovyan/.jupyter"  
       - "./data:/home/jovyan/work/data"
       - "./notebooks:/home/jovyan/work/notebooks"
+      - "./models:/home/jovyan/work/models"
       - "./pipeline:/home/jovyan/work/pipeline"
       - "./utilities:/home/jovyan/work/utilities"
     ports:
