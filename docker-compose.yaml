@@ -2,7 +2,7 @@ version: '3.7'
 services:
   # Jupyter Notebook Server  
   jupyter:
-    image: jupyter/all-spark-notebook:lab-3.0.16
+    image: bryanallenfreeman/jupyter-spark:lab-3.0.16
     container_name: service_jupyter
     volumes:
       - "./.env:/home/jovyan/.env"
