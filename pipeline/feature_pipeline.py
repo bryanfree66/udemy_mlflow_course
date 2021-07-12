@@ -1,45 +1,46 @@
+from typing import List
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame
+from pyspark.ml import Pipeline, PipelineModel
 from pyspark.ml.feature import Imputer, VectorAssembler, PolynomialExpansion, StandardScaler
 
-"""Imputes missing values in dataset
-Imputes missing values input columns based on the mean of the column.
-Outputs a Spark DataFrame with missing columns appended.
-"""
-def impute_missing(df, input_cols, output_cols) -> DataFrame:
-    imputer = Imputer(
+def create_imputer(input_cols:List, output_cols:List) -> Imputer:
+    """Creates an Imputer object that accept List of columns and outputs List of columns"""
+    return Imputer(
         inputCols=input_cols,
         outputCols=output_cols
-    )
-    return imputer.setStrategy("mean").fit(df).transform(df)
+    ).setStrategy("mean")
 
-"""Creates feature vector column in DataFrame
-Creates a feature vector column in the Spark DataFrame with values in input columns.
-Outputs a Spark DataFrame with output column appended
-"""
-def create_feature_vector(df, input_cols, output_col) -> DataFrame:
-    vec_assembler = VectorAssembler(
+def create_assembler(input_cols:List, output_col:str) -> VectorAssembler:
+    """Creates Vector assembler object accepts List of columns and outputs feature vector column"""
+    return VectorAssembler(
         inputCols=input_cols,
         outputCol=output_col
     )
-    return vec_assembler.transform(df)
 
-"""Scales the features of a Dataframe
-Creates a new scaled features column in a Dataframe from a column of feature vectors
-Outputs a Spark DataFrame with the output column appended
-"""
-def scale_features(df, input_col, output_col) -> DataFrame:
-    scaler = StandardScaler(
-        inputCol=input_col, outputCol=output_col,
-        withStd=True, withMean=True
+def create_scaler(input_col:str, output_col:str) -> StandardScaler:
+    """Create StandardScaler object to scale the feature vector"""
+    return StandardScaler(
+        inputCol=input_col,
+        outputCol=output_col,
+        withStd=True,
+        withMean=True
     )
-    scaler_fit = scaler.fit(df)
-    return scaler_fit.transform(df)
 
-"""Performs polynomial expansion on vector of scaled features
-Creates a PolynomialFeatures column in a Dataframe from a vector of scaled features
-Outputs a Spark DataFrame with the output column appended
-"""
-def expand_features(df, input_col, output_col) -> DataFrame:
-    poly_feature_exp = PolynomialExpansion(degree=3, inputCol=input_col, outputCol=output_col)
-    return poly_feature_exp.transform(df)
+def create_expander(input_col:str, output_col:str, exp_degree:int) -> PolynomialExpansion:
+    """Creates PolynomialExpansion object to expand the scaled features in polynomial space"""
+    return PolynomialExpansion(degree=exp_degree,
+        inputCol=input_col,
+        outputCol=output_col
+    )
+
+def create_feature_pipeline(df: DataFrame, feature_cols: List, assembler_out_col:str, scaler_out_col:str, expander_out_col:str, degree:int) -> PipelineModel:
+    """Create a new feature pipeline and fit to the training data
+    Creates and returns a pipeline model from from the individual pipeline stages 
+    """
+    imputer = create_imputer(input_cols=feature_cols, output_cols=feature_cols)
+    assembler = create_assembler(input_cols=feature_cols, output_col=assembler_out_col)
+    scaler = create_scaler(input_col=assembler_out_col, output_col=scaler_out_col)
+    expander = create_expander(input_col=scaler_out_col, output_col=expander_out_col, exp_degree=degree)
+    pipeline = Pipeline(stages=[imputer, assembler, scaler, expander])
+    return pipeline.fit(df)
