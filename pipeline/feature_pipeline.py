@@ -34,7 +34,7 @@ def create_expander(input_col:str, output_col:str, exp_degree:int) -> Polynomial
         outputCol=output_col
     )
 
-def create_feature_pipeline(df: DataFrame, feature_cols: List, assembler_out_col:str, scaler_out_col:str, expander_out_col:str, degree:int) -> PipelineModel:
+def create_feature_pipeline(feature_cols: List, assembler_out_col:str, scaler_out_col:str, expander_out_col:str, degree:int) -> Pipeline:
     """Create a new feature pipeline and fit to the training data
     Creates and returns a pipeline model from from the individual pipeline stages 
     """
@@ -42,5 +42,4 @@ def create_feature_pipeline(df: DataFrame, feature_cols: List, assembler_out_col
     assembler = create_assembler(input_cols=feature_cols, output_col=assembler_out_col)
     scaler = create_scaler(input_col=assembler_out_col, output_col=scaler_out_col)
     expander = create_expander(input_col=scaler_out_col, output_col=expander_out_col, exp_degree=degree)
-    pipeline = Pipeline(stages=[imputer, assembler, scaler, expander])
-    return pipeline.fit(df)
+    return Pipeline(stages=[imputer, assembler, scaler, expander])

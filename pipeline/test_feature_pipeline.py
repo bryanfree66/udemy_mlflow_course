@@ -1,6 +1,6 @@
 import pytest
 from pyspark.sql import SparkSession
-from pyspark.ml import PipelineModel
+from pyspark.ml import Pipeline
 from .feature_pipeline import create_expander, create_imputer, create_scaler, create_assembler, create_feature_pipeline
 from pyspark.ml.feature import Imputer, VectorAssembler, PolynomialExpansion, StandardScaler
 
@@ -64,5 +64,6 @@ def test_create_feature_pipeline(spark_session):
     scaler_out_col = 'ScaledFeatures'
     expander_out_col = 'ExpandedFeatures'
     degree = 3
-    result = create_feature_pipeline(df, feature_cols, assembler_out_col, scaler_out_col, expander_out_col, degree)
-    assert isinstance(result, PipelineModel)
+    result = create_feature_pipeline(feature_cols, assembler_out_col, scaler_out_col, expander_out_col, degree)
+    assert isinstance(result, Pipeline)
+    assert 4 == len(result.getStages())
