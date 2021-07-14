@@ -1,7 +1,7 @@
 import pytest
 from pyspark.sql import SparkSession
 from pyspark.ml import Pipeline
-from .feature_pipeline import create_expander, create_imputer, create_scaler, create_assembler, create_feature_pipeline
+from .feature_pipeline_builder import create_expander, create_imputer, create_scaler, create_assembler, create_feature_pipeline
 from pyspark.ml.feature import Imputer, VectorAssembler, PolynomialExpansion, StandardScaler
 
 
