@@ -1,9 +1,8 @@
 import pytest
 from pyspark.sql import SparkSession
 from pyspark.ml import Pipeline
-from .feature_pipeline_builder import create_expander, create_imputer, create_scaler, create_assembler, create_feature_pipeline
 from pyspark.ml.feature import Imputer, VectorAssembler, PolynomialExpansion, StandardScaler
-
+from .feature_pipeline_builder import create_expander, create_imputer, create_scaler, create_assembler, create_feature_pipeline
 
 @pytest.fixture(scope="session")
 def spark_session():
@@ -48,17 +47,6 @@ def test_create_expander(spark_session):
 
 #@pytest.mark.usefixtures("spark_session")
 def test_create_feature_pipeline(spark_session):
-    df = spark_session.createDataFrame(
-        [
-            (None,8.417305032089528,None,0),
-            (None,6.337137942441213,354.29756524708256,1),
-            (None,None,252.06726719561706,1),
-            (0.22749905020219874,3.4624920476792767,283.693782234296631,1),
-            (4.126528715100222,5.366011335667973,None,0)
-        ],
-        ['Column1','Column2', 'Column3', 'Label']
-    )
-
     feature_cols = ['Column1','Column2', 'Column3']
     assembler_out_col = 'Features'
     scaler_out_col = 'ScaledFeatures'
