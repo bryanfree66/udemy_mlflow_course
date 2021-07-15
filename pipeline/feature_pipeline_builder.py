@@ -1,7 +1,7 @@
 from typing import List
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame
-from pyspark.ml import Pipeline, PipelineModel
+from pyspark.ml import Pipeline
 from pyspark.ml.feature import Imputer, VectorAssembler, PolynomialExpansion, StandardScaler
 
 def create_imputer(input_cols:List, output_cols:List) -> Imputer:
