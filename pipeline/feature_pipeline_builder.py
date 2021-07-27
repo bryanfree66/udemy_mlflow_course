@@ -4,6 +4,15 @@ from pyspark.sql import DataFrame
 from pyspark.ml import Pipeline
 from pyspark.ml.feature import Imputer, VectorAssembler, PolynomialExpansion, StandardScaler
 
+def resample(df,ratio,target, majority_value):
+    positive = df.filter(F.col(target)==majority_value)
+    negative = df.filter(F.col(target)!=majority_value)
+    total_positive = positive.count()
+    total_negative = negative.count()
+    fraction=float(total_positive * ratio)/float(total_negative)
+    sampled = negative.sample(False,fraction)
+    return sampled.union(positive)
+
 def create_imputer(input_cols:List, output_cols:List) -> Imputer:
     """Creates an Imputer object that accept List of columns and outputs List of columns"""
     return Imputer(
